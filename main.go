@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
-	"github.com/sokil/go-statsd-client"
+	"github.com/GoMetric/go-statsd-client"
 	"io/ioutil"
 	"log"
 	"net/http"
