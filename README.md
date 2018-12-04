@@ -39,6 +39,8 @@ make build
 
 Also available [Docker image](https://hub.docker.com/r/sokil/statsd-http-proxy/):
 
+[![docker](https://img.shields.io/docker/pulls/sokil/statsd-http-proxy.svg?style=flat)](https://hub.docker.com/r/sokil/statsd-http-proxy/)
+
 ```
 docker run -p 80:80 sokil/statsd-http-proxy:latest --verbose
 ```
