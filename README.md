@@ -4,13 +4,15 @@
 
 StatsD HTTP proxy with REST interface for using in browsers
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/sokil/statsd-http-proxy?2)](https://goreportcard.com/report/github.com/sokil/statsd-http-proxy)
-[![Build Status](https://travis-ci.org/sokil/statsd-http-proxy.svg?branch=master)](https://travis-ci.org/sokil/statsd-http-proxy)
-[![Code Climate](https://codeclimate.com/github/sokil/statsd-http-proxy/badges/gpa.svg?1)](https://codeclimate.com/github/sokil/statsd-http-proxy)
+[![Go Report Card](https://goreportcard.com/badge/github.com/GoMetric/statsd-http-proxy?2)](https://goreportcard.com/report/github.com/GoMetric/statsd-http-proxy)
+[![Build Status](https://travis-ci.org/GoMetric/statsd-http-proxy.svg?branch=master)](https://travis-ci.org/GoMetric/statsd-http-proxy)
+[![Code Climate](https://codeclimate.com/github/GoMetric/statsd-http-proxy/badges/gpa.svg?1)](https://codeclimate.com/github/GoMetric/statsd-http-proxy)
 
-This server is a HTTP proxy to UDP connection.
+This server is a HTTP proxy to StatsD, which used UDP connections.
+
 Useful for sending metrics to StatsD from frontend by AJAX.
-Authentication based on JWT token.
+
+Authentication optional and based on JWT tokens.
 
 ## Table of contents
 
@@ -39,13 +41,15 @@ make build
 
 Also available [Docker image](https://hub.docker.com/r/sokil/statsd-http-proxy/):
 
+[![docker](https://img.shields.io/docker/pulls/sokil/statsd-http-proxy.svg?style=flat)](https://hub.docker.com/r/sokil/statsd-http-proxy/)
+
 ```
 docker run -p 80:80 sokil/statsd-http-proxy:latest --verbose
 ```
 
 ## Requirements
 
-* [sokil/go-statsd-client](https://github.com/sokil/go-statsd-client) - StatsD client library for Go
+* [GoMetric/go-statsd-client](https://github.com/GoMetric/go-statsd-client) - StatsD client library for Go
 * [dgrijalva/jwt-go](https://github.com/dgrijalva/jwt-go) - JSON Web Tokens builder and parser
 * [gorilla/mux](https://github.com/gorilla/mux) - URL router and dispatcher
 	
@@ -237,4 +241,4 @@ $ time siege -c 255 -r 255 -b -H 'X-JWT-Token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1Ni
 * [Official Docker image for Graphite](https://github.com/graphite-project/docker-graphite-statsd)
 * [Docker image with StatsD, Graphite, Grafana 2 and a Kamon Dashboard](https://github.com/kamon-io/docker-grafana-graphite)
 * [Online JWT generator](http://jwtbuilder.jamiekurtz.com/)
-* [Client for StatsD (Golang)](https://github.com/sokil/go-statsd-client)
+* [Client for StatsD (Golang)](https://github.com/GoMetric/go-statsd-client)
