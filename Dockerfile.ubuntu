@@ -8,10 +8,10 @@ RUN \
     APT_PACKAGES="ca-certificates make git wget curl golang" && \
     apt-get install -y --no-install-recommends ${APT_PACKAGES} && \
     # get latest stable version
-    LATEST_VERSION=$(curl https://api.github.com/repos/sokil/statsd-http-proxy/releases/latest 2>/dev/null | grep tag_name | awk -F'"' '{print $4}') && \
+    LATEST_VERSION=$(curl https://api.github.com/repos/GoMetric/statsd-http-proxy/releases/latest 2>/dev/null | grep tag_name | awk -F'"' '{print $4}') && \
     VERSION=${VERSION:-$LATEST_VERSION} && \
     # download, build source and install
-    wget https://github.com/sokil/statsd-http-proxy/archive/${VERSION}.tar.gz && \
+    wget https://github.com/GoMetric/statsd-http-proxy/archive/${VERSION}.tar.gz && \
     tar -zxvf ${VERSION}.tar.gz && \
     cd statsd-http-proxy-${VERSION} && \
     make build && \

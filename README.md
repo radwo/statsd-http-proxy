@@ -35,7 +35,7 @@ Authentication optional and based on JWT tokens.
 ## Installation
 
 ```
-git clone git@github.com:sokil/statsd-http-proxy.git
+git clone git@github.com:GoMetric/statsd-http-proxy.git
 make build
 ```
 
