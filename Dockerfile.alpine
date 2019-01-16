@@ -26,7 +26,7 @@ RUN apk update && \
     chmod +x ./bin/statsd-http-proxy && \
     mv ./bin/statsd-http-proxy /usr/local/bin && \
     # clear
-    rm -rf statsd-http-proxy-${VERSION} && \
+    cd .. && rm -rf statsd-http-proxy-${VERSION} && \
     apk del .build-deps
 
 # start service

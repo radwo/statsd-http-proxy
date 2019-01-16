@@ -1,9 +1,10 @@
 GOPATH=$(CURDIR)
 
+# build tools
 IS_GCCGO_INSTALLED=$(gccgo --version 2> /dev/null)
 
 # build version
-VERSION=`git describe --tags`
+VERSION=`git describe --tags | awk -F'-' '{print $$1}'`
 BUILD_NUMBER=`git rev-parse HEAD`
 BUILD_DATE=`date +%Y-%m-%d-%H:%M`
 
@@ -24,27 +25,27 @@ deps:
 
 deps-gccgo:
 ifndef IS_GCCGO_INSTALLED
-        $(error "gccgo not installed")
+	$(error "gccgo not installed")
 endif
 
 # build with go compiler
 build: deps
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -a $(LDFLAGS) -o $(CURDIR)/bin/statsd-http-proxy
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -v -x -a $(LDFLAGS) -o $(CURDIR)/bin/statsd-http-proxy
 
 
 # build with go compiler and link optiomizations
 build-shrink: deps
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -a $(LDFLAGS_COMPRESSED) -o $(CURDIR)/bin/statsd-http-proxy-shrink
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -v -x -a $(LDFLAGS_COMPRESSED) -o $(CURDIR)/bin/statsd-http-proxy-shrink
 
 # build with gccgo compiler
 # Require to install gccgo
 build-gccgo: deps deps-gccgo
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -a -compiler gccgo $(GCCGOFLAGS) -o $(CURDIR)/bin/statsd-http-proxy-gccgo
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -v -x -a -compiler gccgo $(GCCGOFLAGS) -o $(CURDIR)/bin/statsd-http-proxy-gccgo
 
 # build with gccgo compiler and gold linker
 # Require to install gccgo
 build-gccgo-gold: deps deps-gccgo
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -a -compiler gccgo $(GCCGOFLAGS_GOLD) -o $(CURDIR)/bin/statsd-http-proxy-gccgo-gold
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -v -x -a -compiler gccgo $(GCCGOFLAGS_GOLD) -o $(CURDIR)/bin/statsd-http-proxy-gccgo-gold
 
 # build all
 build-all: build build-shrink build-gccgo build-gccgo-gold
@@ -53,10 +54,22 @@ build-all: build build-shrink build-gccgo build-gccgo-gold
 clean:
 	rm -rf ./bin
 	go clean
-	
-# publish docker to hub
-publish:
+
+# to publish to docker registry we need to be logged in
+docker-login:
+ifdef DOCKER_REGISTRY_USERNAME
+	@echo "h" $(DOCKER_REGISTRY_USERNAME) "h"
+else
+	docker login
+endif
+
+# build docker images
+docker-build:
 	docker build --tag sokil/statsd-http-proxy:latest -f ./Dockerfile.alpine .
-	docker push sokil/statsd-http-proxy:latest
 	docker build --tag sokil/statsd-http-proxy:$(VERSION) -f ./Dockerfile.alpine .
+
+# publish docker images to hub
+docker-publish: docker-build
+	docker login
+	docker push sokil/statsd-http-proxy:latest
 	docker push sokil/statsd-http-proxy:$(VERSION)
