@@ -1,7 +1,5 @@
 # StatsD HTTP Proxy
 
-**ABANDONED**: Go to https://github.com/GoMetric/statsd-http-proxy
-
 StatsD HTTP proxy with REST interface for using in browsers
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/GoMetric/statsd-http-proxy?2)](https://goreportcard.com/report/github.com/GoMetric/statsd-http-proxy)
@@ -235,6 +233,10 @@ $ time siege -c 255 -r 255 -b -H 'X-JWT-Token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1Ni
   user    0m6.068s
   sys     0m38.440s
 ```
+
+## Proxy client for browser
+
+Basic implementation of proxy client may be found at https://github.com/GoMetric/statsd-http-proxy-client.
 
 ## Useful resources
 * [https://github.com/etsy/statsd](https://github.com/etsy/statsd) - StatsD sources
