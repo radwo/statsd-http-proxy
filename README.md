@@ -16,6 +16,7 @@ Authentication optional and based on JWT tokens.
 
 * [Installation](#installation)
 * [Requirements](#requirements)
+* [Proxy client for browser](#proxy-client-for-browser)
 * [Usage](#usage)
 * [Authentication](#authentication)
 * [Rest resources](#rest-resources)
@@ -50,7 +51,11 @@ docker run -p 80:80 sokil/statsd-http-proxy:latest --verbose
 * [GoMetric/go-statsd-client](https://github.com/GoMetric/go-statsd-client) - StatsD client library for Go
 * [dgrijalva/jwt-go](https://github.com/dgrijalva/jwt-go) - JSON Web Tokens builder and parser
 * [gorilla/mux](https://github.com/gorilla/mux) - URL router and dispatcher
-	
+
+## Proxy client for browser
+
+Basic implementation of proxy client may be found at https://github.com/GoMetric/statsd-http-proxy-client.
+
 ## Usage
 
 Run server:
@@ -233,10 +238,6 @@ $ time siege -c 255 -r 255 -b -H 'X-JWT-Token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1Ni
   user    0m6.068s
   sys     0m38.440s
 ```
-
-## Proxy client for browser
-
-Basic implementation of proxy client may be found at https://github.com/GoMetric/statsd-http-proxy-client.
 
 ## Useful resources
 * [https://github.com/etsy/statsd](https://github.com/etsy/statsd) - StatsD sources
