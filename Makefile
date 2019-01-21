@@ -65,11 +65,11 @@ endif
 
 # build docker images
 docker-build:
-	docker build --tag sokil/statsd-http-proxy:latest -f ./Dockerfile.alpine .
-	docker build --tag sokil/statsd-http-proxy:$(VERSION) -f ./Dockerfile.alpine .
+	docker build --tag gometric/statsd-http-proxy:latest -f ./Dockerfile.alpine .
+	docker build --tag gometric/statsd-http-proxy:$(VERSION) -f ./Dockerfile.alpine .
 
 # publish docker images to hub
 docker-publish: docker-build
 	docker login
-	docker push sokil/statsd-http-proxy:latest
-	docker push sokil/statsd-http-proxy:$(VERSION)
+	docker push gometric/statsd-http-proxy:latest
+	docker push gometric/statsd-http-proxy:$(VERSION)
