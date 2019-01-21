@@ -38,12 +38,12 @@ git clone git@github.com:GoMetric/statsd-http-proxy.git
 make build
 ```
 
-Also available [Docker image](https://hub.docker.com/r/sokil/statsd-http-proxy/):
+Also available [Docker image](https://hub.docker.com/r/gometric/statsd-http-proxy/):
 
-[![docker](https://img.shields.io/docker/pulls/sokil/statsd-http-proxy.svg?style=flat)](https://hub.docker.com/r/sokil/statsd-http-proxy/)
+[![docker](https://img.shields.io/docker/pulls/gometric/statsd-http-proxy.svg?style=flat)](https://hub.docker.com/r/gometric/statsd-http-proxy/)
 
 ```
-docker run -p 80:80 sokil/statsd-http-proxy:latest --verbose
+docker run -p 80:80 gometric/statsd-http-proxy:latest --verbose
 ```
 
 ## Requirements
