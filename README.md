@@ -111,6 +111,8 @@ Authentication is optional. It based on passing JWT token to server, encrypted w
 command line argument. If secret not configured in `jwt-secret`, then requests to server accepted without authentication.
 Token sends to server in `X-JWT-Token` header or in `token` query parameter.
 
+We recomment to use JWT tokens to prevent flood requests, setup JWT token expiration time, and update it.
+
 ## Rest resources
 
 ### Heartbeat
