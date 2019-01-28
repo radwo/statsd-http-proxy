@@ -73,12 +73,7 @@ statsd-http-proxy \
 
 * Run server (HTTPS):
 
-```
-# generate self-signed certificate and private key for the https
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem
-
-# run the https server
-bash
+```bash
 statsd-http-proxy \
 	--verbose \
 	--http-host=127.0.0.1 \

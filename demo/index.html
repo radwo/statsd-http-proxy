@@ -6,9 +6,20 @@
 </head>
 <body>
 
-You are running demo of StatsD HTTP Proxy. Please, start <b>statsdHttpProxy.sh</b> for handling HTTP requests and
+You are running demo of StatsD HTTP(s) Proxy. Please, start <b>statsdHttp(s)Proxy.sh</b> for handling HTTP(s) requests and
 <b>statsdStub.sh</b> for monitoring proxied metrics.
 
+<p>Communication protocol:</p>
+<div>
+	<input type="radio" id="protocol" class="protocolRadio"
+		   name="protocol" value="http" checked>
+	<label for="protocol">HTTP (8080)</label>
+	<input type="radio" id="protocol" class="protocolRadio"
+		   name="protocol" value="https">
+	<label for="protocol">HTTPS (433)</label>
+</div>
+
+<p>Options:</p>
 <ul>
     <li><a href="#" data-metric-type="count">Send count</a></li>
     <li><a href="#" data-metric-type="timing">Send timing</a></li>
@@ -26,7 +37,7 @@ You are running demo of StatsD HTTP Proxy. Please, start <b>statsdHttpProxy.sh</
     (function() {
         // Token is valid to 2029-02-23T21:32:22.615Z, and builds with secret: somesecret
         var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE1MTk0MjE1NDIsImV4cCI6MTg2NjU3Njc0MiwiYXVkIjoiIiwic3ViIjoiIiwiR3JlZXRpbmciOiJIZWxsbywgZGVzY2VuZGFudHMifQ.n2qI2Ar9KzL3IsmlHjZAQmrf_Iz2ugnplwNIl4ELlDk';
-        var statsdHttpProxyHost = 'http://localhost:8080';
+		var statsdHttpProxyHost =  'localhost';
         var metricName = 'someMetricName';
         var metricType = "count";
         var tokenMode = "token-in-header";
@@ -42,7 +53,14 @@ You are running demo of StatsD HTTP Proxy. Please, start <b>statsdHttpProxy.sh</
         // send some metric
         setInterval(function() {
             var headers = {};
-            var url = statsdHttpProxyHost + '/' + metricType + '/' + metricName;
+			var protocol = $('.protocolRadio:checked').val();
+			var port = '8080' // http
+
+			if (protocol == 'https') {
+			  port = '433'
+			}
+			
+            var url = protocol + '://' + statsdHttpProxyHost + ':' + port + '/' + metricType + '/' + metricName;
             var data = {};
 
             switch (metricType) {

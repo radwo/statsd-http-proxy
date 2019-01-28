@@ -1,6 +1,9 @@
 #!/bin/sh
 
-# This server start listening connections by HTTP and pass it to StatsD by UDP
+# This server start listening connections by HTTPS and pass it to StatsD by UDP
+
+# generate self-signed cert and key with default subject
+#openssl req -x509 -nodes -days 358000 -newkey rsa:2048 -keyout key.pem -out cert.pem -subj "/C=PL/ST=test/L=test/O=test/OU=test/CN=test"
 
 CURRENT_DIR=$(dirname $(readlink -f $0))
 

@@ -42,7 +42,7 @@ const jwtQueryStringKeyName = "token"
 var httpHost = flag.String("http-host", defaultHTTPHost, "HTTP Host")
 var httpPort = flag.Int("http-port", defaultHTTPPort, "HTTP Port")
 var tlsCert = flag.String("tls-cert", "", "TLS certificate to enable HTTPS")
-var tlsKey = flag.String("tls-key", "", "TLS private key to enable HTTPS")
+var tlsKey = flag.String("tls-key", "", "TLS private key  to enable HTTPS")
 var statsdHost = flag.String("statsd-host", defaultStatsDHost, "StatsD Host")
 var statsdPort = flag.Int("statsd-port", defaultStatsDPort, "StatsD Port")
 var metricPrefix = flag.String("metric-prefix", "", "Prefix of metric name")
@@ -124,21 +124,19 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
+	var err error
 	if ( len(*tlsCert) > 0 && len(*tlsKey) > 0) {
 		// start https server
-		err := s.ListenAndServeTLS(*tlsCert, *tlsKey)
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
-		}
+		err = s.ListenAndServeTLS(*tlsCert, *tlsKey)
 	} else {
 		// start http server
-		err := s.ListenAndServe()
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
-		}
+		err = s.ListenAndServe()
 	}
+
+	if err != nil {
+        log.Fatal(err)
+        os.Exit(1)
+    }
 }
 
 // validate CORS headers
