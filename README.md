@@ -62,28 +62,28 @@ Basic implementation of proxy client may be found at https://github.com/GoMetric
 
 ```bash
 statsd-http-proxy \
-	--verbose \
-	--http-host=127.0.0.1 \
-	--http-port=8080 \
-	--statsd-host=127.0.0.1 \
-	--statsd-port=8125 \
-	--jwt-secret=somesecret \
-	--metric-prefix=prefix.subprefix
+    --verbose \
+    --http-host=127.0.0.1 \
+    --http-port=8080 \
+    --statsd-host=127.0.0.1 \
+    --statsd-port=8125 \
+    --jwt-secret=somesecret \
+    --metric-prefix=prefix.subprefix
 ```
 
 * Run server (HTTPS):
 
 ```bash
 statsd-http-proxy \
-	--verbose \
-	--http-host=127.0.0.1 \
-	--http-port=433 \
-	--tls-cert=cert.pem \
-	--tls-key=key.pem \
-	--statsd-host=127.0.0.1 \
-	--statsd-port=8125 \
-	--jwt-secret=somesecret \
-	--metric-prefix=prefix.subprefix
+    --verbose \
+    --http-host=127.0.0.1 \
+    --http-port=433 \
+    --tls-cert=cert.pem \
+    --tls-key=key.pem \
+    --statsd-host=127.0.0.1 \
+    --statsd-port=8125 \
+    --jwt-secret=somesecret \
+    --metric-prefix=prefix.subprefix
 ```
 
 Print server version and exit:
@@ -109,32 +109,15 @@ Command line arguments:
 
 Sample code to send metric in browser with JWT token in header:
 
-* HTTP:
-
 ```javascript
 $.ajax({
     url: 'http://127.0.0.1:8080/count/some.key.name',
     method: 'POST',
     headers: {
-        'X-JWT-Token' => 'some-jwt-token'
+        'X-JWT-Token': 'some-jwt-token'
     },
     data: {
-	value: 100500
-    }
-});
-```
-
-* HTTPS (if self-signed certificate is used it has to be accepted!):
-
-```javascript
-$.ajax({
-    url: 'https://127.0.0.1:433/count/some.key.name',
-    method: 'POST',
-    headers: {
-        'X-JWT-Token' => 'some-jwt-token'
-    },
-    data: {
-	value: 100500
+        value: 100500
     }
 });
 ```
@@ -145,7 +128,7 @@ Authentication is optional. It based on passing JWT token to server, encrypted w
 command line argument. If secret not configured in `jwt-secret`, then requests to server accepted without authentication.
 Token sends to server in `X-JWT-Token` header or in `token` query parameter.
 
-We recomment to use JWT tokens to prevent flood requests, setup JWT token expiration time, and update active JWT token in browser.
+We recommend to use JWT tokens to prevent flood requests, setup JWT token expiration time, and update active JWT token in browser.
 
 ## Rest resources
 
