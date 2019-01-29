@@ -78,8 +78,8 @@ statsd-http-proxy \
 	--verbose \
 	--http-host=127.0.0.1 \
 	--http-port=433 \
-    --tls-cert=cert.pem \
-    --tls-key=key.pem \
+	--tls-cert=cert.pem \
+	--tls-key=key.pem \
 	--statsd-host=127.0.0.1 \
 	--statsd-port=8125 \
 	--jwt-secret=somesecret \

@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/GoMetric/go-statsd-client"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
-	"github.com/GoMetric/go-statsd-client"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -104,7 +104,7 @@ func main() {
 		validateCORS(validateJWT(http.HandlerFunc(handleSetRequest))),
 	).Methods("POST")
 
-	router.PathPrefix("/").Methods("OPTIONS").HandlerFunc(handlePreFlightCORSRequest);
+	router.PathPrefix("/").Methods("OPTIONS").HandlerFunc(handlePreFlightCORSRequest)
 
 	// Create a new StatsD connection
 	statsdClient = statsd.NewClient(*statsdHost, *statsdPort)
@@ -125,7 +125,7 @@ func main() {
 	}
 
 	var err error
-	if ( len(*tlsCert) > 0 && len(*tlsKey) > 0) {
+	if len(*tlsCert) > 0 && len(*tlsKey) > 0 {
 		// start https server
 		err = s.ListenAndServeTLS(*tlsCert, *tlsKey)
 	} else {
@@ -134,9 +134,9 @@ func main() {
 	}
 
 	if err != nil {
-        log.Fatal(err)
-        os.Exit(1)
-    }
+		log.Fatal(err)
+		os.Exit(1)
+	}
 }
 
 // validate CORS headers

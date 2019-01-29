@@ -21,7 +21,3 @@ src
 
 # keys
 *.pem
-
-# ide files
-.idea/**
-/**/.idea/**
