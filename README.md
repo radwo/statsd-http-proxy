@@ -58,13 +58,28 @@ Basic implementation of proxy client may be found at https://github.com/GoMetric
 
 ## Usage
 
-Run server:
+* Run server (HTTP):
 
 ```bash
 statsd-http-proxy \
 	--verbose \
 	--http-host=127.0.0.1 \
 	--http-port=8080 \
+	--statsd-host=127.0.0.1 \
+	--statsd-port=8125 \
+	--jwt-secret=somesecret \
+	--metric-prefix=prefix.subprefix
+```
+
+* Run server (HTTPS):
+
+```bash
+statsd-http-proxy \
+	--verbose \
+	--http-host=127.0.0.1 \
+	--http-port=433 \
+	--tls-cert=cert.pem \
+	--tls-key=key.pem \
 	--statsd-host=127.0.0.1 \
 	--statsd-port=8125 \
 	--jwt-secret=somesecret \
@@ -79,22 +94,41 @@ statsd-http-proxy --version
 
 Command line arguments:
 
-| Parameter       | Description                          | Default value                                                                  |
-|-----------------|--------------------------------------|--------------------------------------------------------------------------------|
-| verbose         | Print debug info to stderr           | Optional. Default false                                                        |
-| http-host       | Host of HTTP server                  | Optional. Default 127.0.0.1. To accept connections on any interface, set to "" |
-| http-port       | Port of HTTP server                  | Optional. Default 80                                                           |
-| statsd-host     | Host of StatsD instance              | Optional. Default 127.0.0.1                                                    |
-| statsd-port     | Port of StatsD instance              | Optional. Default 8125                                                         |
-| jwt-secret      | JWT token secret                     | Optional. If not set, server accepts all connections                           |
-| metric-prefix   | Prefix, added to any metric name     | Optional. If not set, do not add prefix                                        |
-| version         | Print version of server and exit     | Optional                                                                       |
+| Parameter       | Description                          | Default value                                                                     |
+|-----------------|--------------------------------------|-----------------------------------------------------------------------------------|
+| verbose         | Print debug info to stderr           | Optional. Default false                                                           |
+| http-host       | Host of HTTP server                  | Optional. Default 127.0.0.1. To accept connections on any interface, set to ""    |
+| http-port       | Port of HTTP server                  | Optional. Default 80                                                              |
+| tls-cert        | TLS certificate for the HTTPS        | Optional. Default "" to use HTTP. If both tls-cert and tls-key set, HTTPS is used |
+| tls-key         | TLS private key for the HTTPS        | Optional. Default "" to use HTTP. If both tls-cert and tls-key set, HTTPS is used |
+| statsd-host     | Host of StatsD instance              | Optional. Default 127.0.0.1                                                       |
+| statsd-port     | Port of StatsD instance              | Optional. Default 8125                                                            |
+| jwt-secret      | JWT token secret                     | Optional. If not set, server accepts all connections                              |
+| metric-prefix   | Prefix, added to any metric name     | Optional. If not set, do not add prefix                                           |
+| version         | Print version of server and exit     | Optional                                                                          |
 
 Sample code to send metric in browser with JWT token in header:
+
+* HTTP:
 
 ```javascript
 $.ajax({
     url: 'http://127.0.0.1:8080/count/some.key.name',
+    method: 'POST',
+    headers: {
+        'X-JWT-Token' => 'some-jwt-token'
+    },
+    data: {
+	value: 100500
+    }
+});
+```
+
+* HTTPS (if self-signed certificate is used it has to be accepted!):
+
+```javascript
+$.ajax({
+    url: 'https://127.0.0.1:433/count/some.key.name',
     method: 'POST',
     headers: {
         'X-JWT-Token' => 'some-jwt-token'
@@ -180,7 +214,7 @@ value=1
 
 | Parameter  | Description                          | Default value                      |
 |------------|--------------------------------------|------------------------------------|
-| value      | Integer value                                | Optional. Default 1                |
+| value      | Integer value                        | Optional. Default 1                |
 
 ## Response
 
@@ -190,7 +224,7 @@ Other HTTP status codes:
 
 | CODE             | Description                             |
 |------------------|-----------------------------------------|
-| 400 Bad Request  | Invalid parameters specified           |
+| 400 Bad Request  | Invalid parameters specified            |
 | 401 Unauthorized | Token not sent                          |
 | 403 Forbidden    | Token invalid/expired                   |
 | 404 Not found    | Invalid url requested                   |
