@@ -115,6 +115,13 @@ func main() {
 	httpAddress := fmt.Sprintf("%s:%d", *httpHost, *httpPort)
 	log.Printf("Starting HTTP server at %s", httpAddress)
 
+	if *tokenSecret != "" {
+		log.Printf("Starting with token")
+	} else {
+		log.Printf("Starting without token")
+	}
+
+
 	// create http server
 	s := &http.Server{
 		Addr:           httpAddress,
@@ -158,6 +165,9 @@ func validateJWT(next http.Handler) http.Handler {
 		} else {
 			// get JWT from header
 			tokenString := r.Header.Get(jwtHeaderName)
+
+			log.Printf("Token secret: %s", *tokenSecret)
+			log.Printf("Token string: %s", tokenString)
 
 			// get JWT from query string
 			if tokenString == "" {

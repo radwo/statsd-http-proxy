@@ -15,10 +15,10 @@ RUN apk update && \
     # update certs
     update-ca-certificates && \
     # get latest stable version
-    LATEST_VERSION=$(curl https://api.github.com/repos/GoMetric/statsd-http-proxy/releases/latest 2>/dev/null | grep tag_name | awk -F'"' '{print $4}') && \
+    LATEST_VERSION=$(curl https://api.github.com/repos/radwo/statsd-http-proxy/releases/latest 2>/dev/null | grep tag_name | awk -F'"' '{print $4}') && \
     VERSION=${VERSION:-$LATEST_VERSION} && \
     # download source
-    wget https://github.com/GoMetric/statsd-http-proxy/archive/$VERSION.tar.gz && \
+    wget https://github.com/radwo/statsd-http-proxy/archive/$VERSION.tar.gz && \
     tar -zxvf ${VERSION}.tar.gz && \
     cd statsd-http-proxy-${VERSION} && \
     # make and install source

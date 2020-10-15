@@ -73,3 +73,7 @@ docker-publish: docker-build
 	docker login
 	docker push gometric/statsd-http-proxy:latest
 	docker push gometric/statsd-http-proxy:$(VERSION)
+
+docker-push-semaphore:
+	docker build --tag us.gcr.io/semaphore2-prod/statsd-http-proxy:latest -f ./Dockerfile.alpine .
+	docker push us.gcr.io/semaphore2-prod/statsd-http-proxy:latest
