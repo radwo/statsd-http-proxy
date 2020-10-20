@@ -296,6 +296,7 @@ func handleTimingRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	log.Printf("key: %s time: %d rate: %s", key, time, sampleRate)
 	// send request
 	statsdClient.Timing(key, time, float32(sampleRate))
 }
