@@ -17,6 +17,7 @@ RUN apk update && \
     # get latest stable version
     LATEST_VERSION=$(curl https://api.github.com/repos/radwo/statsd-http-proxy/releases/latest 2>/dev/null | grep tag_name | awk -F'"' '{print $4}') && \
     VERSION=${VERSION:-$LATEST_VERSION} && \
+	VERSION=0.0.3 && \
     # download source
     wget https://github.com/radwo/statsd-http-proxy/archive/$VERSION.tar.gz && \
     tar -zxvf ${VERSION}.tar.gz && \

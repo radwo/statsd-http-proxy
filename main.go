@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/GoMetric/go-statsd-client"
@@ -104,12 +105,24 @@ func main() {
 		validateCORS(validateJWT(http.HandlerFunc(handleSetRequest))),
 	).Methods("POST")
 
+	router.Handle(
+		"/batch",
+		validateCORS(validateJWT(http.HandlerFunc(handleBatchRequest))),
+	).Methods("POST")
+
 	router.PathPrefix("/").Methods("OPTIONS").HandlerFunc(handlePreFlightCORSRequest)
 
 	// Create a new StatsD connection
-	statsdClient = statsd.NewClient(*statsdHost, *statsdPort)
+	statsdClient = statsd.NewBufferedClient(*statsdHost, *statsdPort)
 	statsdClient.Open()
 	defer statsdClient.Close()
+
+    ticker := time.NewTicker(2 * time.Second)
+    go func(){
+        for _ = range ticker.C {
+			statsdClient.Flush()
+        }
+    }()
 
 	// get server address to bind
 	httpAddress := fmt.Sprintf("%s:%d", *httpHost, *httpPort)
@@ -320,6 +333,75 @@ func handleSetRequest(w http.ResponseWriter, r *http.Request) {
 
 	// send request
 	statsdClient.Set(key, value)
+}
+
+type Metrics struct {
+	Metrics []*Metric
+}
+
+type Metric struct {
+	Type string `json:"type"`
+	Key string `json:"key"`
+	Data *MetricData
+}
+
+type MetricData struct {
+	Value int `json:"value"`
+	SampleRate float32 `json:"sample_rate"`
+	Shift *int `json:"shift"`
+	Time *int64 `json:"time"`
+}
+
+// https://stackoverflow.com/a/41102996/3887547
+// Default values for JSON
+func (t *MetricData) UnmarshalJSON(data []byte) error {
+  type testAlias MetricData
+  test := &testAlias{
+    Value: 1,
+	Time: nil,
+    SampleRate: 1,
+    Shift: nil,
+  }
+
+  _ = json.Unmarshal(data, test)
+
+  *t = MetricData(*test)
+  return nil
+}
+
+func handleBatchRequest(w http.ResponseWriter, r *http.Request) {
+	var data Metrics
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Invalid values specified", 400)
+	}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		http.Error(w, "Invalid values specified", 400)
+	}
+
+	for i:= range data.Metrics {
+		metric := data.Metrics[i]
+		key := *metricPrefix + metric.Key
+
+		switch metric.Type {
+		case "timing":
+			if metric.Data.Time != nil {
+				statsdClient.Timing(key, *metric.Data.Time, metric.Data.SampleRate)
+			}
+		case "set":
+			statsdClient.Set(key, metric.Data.Value)
+		case "gauge":
+			if metric.Data.Shift != nil {
+				statsdClient.GaugeShift(key, *metric.Data.Shift)
+			} else {
+				statsdClient.Gauge(key, metric.Data.Value)
+			}
+		case "count":
+			statsdClient.Count(key, metric.Data.Value, metric.Data.SampleRate)
+		}
+	}
 }
 
 // Handle PreFlight CORS request with OPTIONS method
