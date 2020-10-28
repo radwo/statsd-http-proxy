@@ -13,6 +13,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"strings"
 )
 
 // Version is a current git commit hash and tag
@@ -46,7 +47,6 @@ var tlsCert = flag.String("tls-cert", "", "TLS certificate to enable HTTPS")
 var tlsKey = flag.String("tls-key", "", "TLS private key  to enable HTTPS")
 var statsdHost = flag.String("statsd-host", defaultStatsDHost, "StatsD Host")
 var statsdPort = flag.Int("statsd-port", defaultStatsDPort, "StatsD Port")
-var metricPrefix = flag.String("metric-prefix", "", "Prefix of metric name")
 var tokenSecret = flag.String("jwt-secret", "", "Secret to encrypt JWT")
 var verbose = flag.Bool("verbose", false, "Verbose")
 var version = flag.Bool("version", false, "Show version")
@@ -69,11 +69,6 @@ func main() {
 		log.SetOutput(os.Stderr)
 	} else {
 		log.SetOutput(ioutil.Discard)
-	}
-
-	// prepare metric prefix
-	if *metricPrefix != "" && (*metricPrefix)[len(*metricPrefix)-1:] != "." {
-		*metricPrefix = *metricPrefix + "."
 	}
 
 	// create HTTP router
@@ -221,7 +216,7 @@ func handleHeartbeatRequest(w http.ResponseWriter, r *http.Request) {
 func handleCountRequest(w http.ResponseWriter, r *http.Request) {
 	// get key
 	vars := mux.Vars(r)
-	key := *metricPrefix + vars["key"]
+	key := vars["key"]
 
 	// get count value
 	var value = 1
@@ -254,7 +249,7 @@ func handleCountRequest(w http.ResponseWriter, r *http.Request) {
 func handleGaugeRequest(w http.ResponseWriter, r *http.Request) {
 	// get key
 	vars := mux.Vars(r)
-	key := *metricPrefix + vars["key"]
+	key := vars["key"]
 
 	// get gauge shift
 	shiftPostFormValue := r.PostFormValue("shift")
@@ -290,7 +285,7 @@ func handleGaugeRequest(w http.ResponseWriter, r *http.Request) {
 func handleTimingRequest(w http.ResponseWriter, r *http.Request) {
 	// get key
 	vars := mux.Vars(r)
-	key := *metricPrefix + vars["key"]
+	key := vars["key"]
 
 	// get timing
 	time, err := strconv.ParseInt(r.PostFormValue("time"), 10, 64)
@@ -318,7 +313,7 @@ func handleTimingRequest(w http.ResponseWriter, r *http.Request) {
 func handleSetRequest(w http.ResponseWriter, r *http.Request) {
 	// get key
 	vars := mux.Vars(r)
-	key := *metricPrefix + vars["key"]
+	key := vars["key"]
 
 	// get set value
 	var value = 1
@@ -342,7 +337,9 @@ type Metrics struct {
 type Metric struct {
 	Type string `json:"type"`
 	Key string `json:"key"`
+	Prefix string `json:"prefix"`
 	Data *MetricData
+	Tags []string
 }
 
 type MetricData struct {
@@ -383,7 +380,8 @@ func handleBatchRequest(w http.ResponseWriter, r *http.Request) {
 
 	for i:= range data.Metrics {
 		metric := data.Metrics[i]
-		key := *metricPrefix + metric.Key
+		keyElements := []string{"tagged", metric.Prefix, formatTags(metric.Tags), metric.Key}
+		key := strings.Join(keyElements, ".")
 
 		switch metric.Type {
 		case "timing":
@@ -402,6 +400,13 @@ func handleBatchRequest(w http.ResponseWriter, r *http.Request) {
 			statsdClient.Count(key, metric.Data.Value, metric.Data.SampleRate)
 		}
 	}
+}
+
+func formatTags(tags []string) string {
+	not_tags := []string{"no_tag", "not_tag", "not_tag"}
+	tags = append(tags, not_tags...)[:3]
+
+	return strings.Join(tags, ".")
 }
 
 // Handle PreFlight CORS request with OPTIONS method
