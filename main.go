@@ -383,9 +383,12 @@ func handleBatchRequest(w http.ResponseWriter, r *http.Request) {
 		keyElements := []string{"tagged", metric.Prefix, formatTags(metric.Tags), metric.Key}
 		key := strings.Join(keyElements, ".")
 
+
 		switch metric.Type {
 		case "timing":
 			if metric.Data.Time != nil {
+				log.Printf("key: %s time: %d rate: %d", key, *metric.Data.Time, metric.Data.SampleRate)
+
 				statsdClient.Timing(key, *metric.Data.Time, metric.Data.SampleRate)
 			}
 		case "set":
